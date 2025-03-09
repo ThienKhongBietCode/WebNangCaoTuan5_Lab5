@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Giỏ hàng</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <h1>Giỏ hàng của bạn</h1>
+
+  <% if (cart.length > 0) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Hình ảnh</th>
+          <th>Sản phẩm</th>
+          <th>Giá</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% cart.forEach(item => { %>
+          <tr>
+            <td><img src="<%= item.image %>" alt="<%= item.name %>" width="50"></td>
+            <td><%= item.name %></td>
+            <td><%= item.price %> VNĐ</td>
+            <td>
+              <form action="/cart/remove/<%= item._id %>" method="POST" style="display:inline;">
+                <button type="submit">Xóa</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <h3>Tổng cộng: <%= cart.reduce((total, item) => total + item.price, 0) %> VNĐ</h3>
+  <% } else { %>
+    <p>Giỏ hàng của bạn đang trống.</p>
+  <% } %>
+
+  <a href="/">Tiếp tục mua sắm</a>
+</body>
+</html>
