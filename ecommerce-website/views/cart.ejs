@@ -1,44 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Giỏ hàng</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <%- include('partials/header') %>
-  <h1>Giỏ hàng của bạn</h1>
-
-  <% if (cart.length > 0) { %>
-    <table>
-      <thead>
-        <tr>
-          <th>Hình ảnh</th>
-          <th>Sản phẩm</th>
-          <th>Giá</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% cart.forEach(item => { %>
-          <tr>
-            <td><img src="<%= item.image %>" alt="<%= item.name %>" width="50"></td>
-            <td><%= item.name %></td>
-            <td><%= item.price %> VNĐ</td>
-            <td>
-              <form action="/cart/remove/<%= item._id %>" method="POST" style="display:inline;">
-                <button type="submit">Xóa</button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-
-    <h3>Tổng cộng: <%= cart.reduce((total, item) => total + item.price, 0) %> VNĐ</h3>
-  <% } else { %>
-    <p>Giỏ hàng của bạn đang trống.</p>
-  <% } %>
-
-  <a href="/">Tiếp tục mua sắm</a>
+  <main class="container">
+    <h1>Giỏ hàng của bạn</h1>
+    <% if (cart.length > 0) { %>
+      <form action="/cart/update" method="POST">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Hình ảnh</th>
+              <th>Sản phẩm</th>
+              <th>Giá</th>
+              <th>Số lượng</th>
+              <th>Tổng</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% cart.forEach((item, index) => { %>
+              <tr>
+                <td><img src="<%= item.image %>" alt="<%= item.name %>"></td>
+                <td><%= item.name %></td>
+                <td><%= item.price.toLocaleString() %> VNĐ</td>
+                <td>
+                  <input type="number" name="quantities[<%= index %>]" value="<%= item.quantity || 1 %>" min="1">
+                </td>
+                <td><%= (item.price * (item.quantity || 1)).toLocaleString() %> VNĐ</td>
+                <td>
+                  <form action="/cart/remove/<%= item._id %>" method="POST">
+                    <button type="submit" class="btn btn-remove">Xóa</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <div class="cart-actions">
+          <button type="submit" class="btn btn-update">Cập nhật</button>
+          <a href="/checkout" class="btn btn-checkout">Thanh toán</a>
+        </div>
+        <h3>Tổng cộng: <%= cart.reduce((total, item) => total + item.price * (item.quantity || 1), 0).toLocaleString() %> VNĐ</h3>
+      </form>
+    <% } else { %>
+      <p>Giỏ hàng của bạn đang trống. <a href="/">Mua sắm ngay</a></p>
+    <% } %>
+  </main>
 </body>
 </html>

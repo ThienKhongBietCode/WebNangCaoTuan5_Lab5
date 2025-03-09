@@ -1,0 +1,13 @@
+<nav class="navbar">
+    <div class="nav-brand">
+      <a href="/">ShopOnline</a>
+    </div>
+    <div class="nav-links">
+      <a href="/">Sản phẩm</a>
+      <a href="/cart">Giỏ hàng (<%= cartCount %>)</a>
+      <form action="/search" method="GET" class="search-form">
+        <input type="text" name="q" placeholder="Tìm kiếm...">
+        <button type="submit">Tìm</button>
+      </form>
+    </div>
+  </nav>

@@ -1,23 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Danh sách sản phẩm</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <%- include('partials/header') %>
-  <h1>Danh sách sản phẩm</h1>
-  <ul>
-    <% products.forEach(product => { %>
-      <li>
-        <img src="<%= product.image %>" alt="<%= product.name %>" width="50">
-        <%= product.name %> - <%= product.price %> VNĐ
-        <a href="/product/<%= product._id %>">Chi tiết</a>
-        <form action="/cart/add/<%= product._id %>" method="POST" style="display:inline;">
-          <button type="submit">Thêm vào giỏ hàng</button>
-        </form>
-      </li>
-    <% }) %>
-  </ul>
+  <main class="container">
+    <h1>Danh sách sản phẩm</h1>
+    <div class="product-grid">
+      <% products.forEach(product => { %>
+        <div class="product-card">
+          <img src="<%= product.image %>" alt="<%= product.name %>">
+          <div class="product-info">
+            <h3><%= product.name %></h3>
+            <p class="price"><%= product.price.toLocaleString() %> VNĐ</p>
+            <div class="actions">
+              <a href="/product/<%= product._id %>" class="btn btn-detail">Chi tiết</a>
+              <form action="/cart/add/<%= product._id %>" method="POST">
+                <button type="submit" class="btn btn-add">Thêm vào giỏ</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </main>
 </body>
 </html>

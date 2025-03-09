@@ -22,11 +22,28 @@ router.get('/cart', (req, res) => {
 
 // Thêm vào giỏ hàng
 router.post('/cart/add/:id', async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  if (!req.session.cart) req.session.cart = [];
-  req.session.cart.push(product);
-  res.redirect('/');
-});
+    const product = await Product.findById(req.params.id);
+    if (!req.session.cart) req.session.cart = [];
+    const existingItem = req.session.cart.find(item => item._id == req.params.id);
+    if (existingItem) {
+      existingItem.quantity = (existingItem.quantity || 1) + 1;
+    } else {
+      product.quantity = 1;
+      req.session.cart.push(product);
+    }
+    res.redirect('/');
+  });
+  
+  // Cập nhật giỏ hàng
+  router.post('/cart/update', (req, res) => {
+    const quantities = req.body.quantities;
+    if (req.session.cart) {
+      req.session.cart.forEach((item, index) => {
+        item.quantity = parseInt(quantities[index]) || 1;
+      });
+    }
+    res.redirect('/cart');
+  });
 
 // Xóa khỏi giỏ hàng
 router.post('/cart/remove/:id', (req, res) => {
@@ -62,4 +79,22 @@ router.delete('/api/products/:id', async (req, res) => {
   res.json({ message: 'Product deleted' });
 });
 
+router.get('/search', async (req, res) => {
+    const query = req.query.q;
+    const products = await Product.find({ name: { $regex: query, $options: 'i' } });
+    res.render('products', { products, cartCount: req.session.cart ? req.session.cart.length : 0 });
+  });
+
+
+//Thanh toán
+router.get('/checkout', (req, res) => {
+    const cart = req.session.cart || [];
+    const total = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
+    res.render('checkout', { total, cartCount: cart.length });
+  });
+  
+  router.post('/checkout', (req, res) => {
+    req.session.cart = []; // Xóa giỏ hàng sau khi thanh toán
+    res.send('Thanh toán thành công! <a href="/">Quay lại trang chủ</a>');
+  });
 module.exports = router; // Quan trọng: Export router
